@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Minification" default="compile-groovy" basedir=".">
+
+	<property name="build.dir" value="target" />
+	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="minify.dir" value="${build.dir}/minify" />
+	<property name="libs.dir" value="libs" />
+	<property name="yui.compiler" value="${yui.compiler.path}" />
+	<property name="lineterminator" value="${line.newline}" />	
+
+	<path id="groovy.classpath">
+		<fileset dir="${libs.dir}" includes="groovy-all-2.4.0.jar" />
+	</path>
+	<path id="logging.classpath">
+		<fileset dir="${libs.dir}" includes="logging.jar" />
+	</path>
+	
+
+	<path id="yui.classpath">
+		<fileset dir="${libs.dir}" includes="yuicompressor-2.4.8.jar" />
+	</path>
+
+	<path id="shrinksafe.classpath">
+		<fileset dir="${libs.dir}" includes="shrinksafe.jar" />
+	</path>
+
+	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+		<classpath refid="groovy.classpath" />
+		<classpath refid="logging.classpath"/>
+		<classpath refid="yui.classpath" />		
+		<classpath refid="shrinksafe.classpath" />		
+	</taskdef>
+
+	<!-- ========= Define "regular" targets: clean, compile, ... ========= -->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${classes.dir}" />
+		<mkdir dir="${minify.dir}" />
+	</target>
+
+
+	<!-- Minification stuff -->
+	<target name="copy-js">
+		<copy todir="${minify.dir}/js">
+			<fileset dir="${assets-directory}">
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="copy-jsp">
+		<copy todir="${minify.dir}">
+			<fileset dir="${jsp-directory}">
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="compile-groovy" description="Compile groovy minification script to bytecode" depends="init">
+		<groovyc destdir="${classes.dir}" srcdir="groovy" includes="Minification.groovy">
+		</groovyc>
+	</target>
+
+	<target name="process-jsp" depends="compile-groovy">
+		<java classname="Minification">
+			<classpath refid="groovy.classpath" />			
+			<classpath refid="yui.classpath" />			
+			<classpath refid="shrinksafe.classpath" />			
+			<arg value="${minify.dir}" />
+			<arg value="${line.newline}" />
+			<arg value="yui" />
+		</java>
+	</target>
+
+	<target name="minify" depends="clean, init, copy-jsp, copy-js, process-jsp" />
+</project>
