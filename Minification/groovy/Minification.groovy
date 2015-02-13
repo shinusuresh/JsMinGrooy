@@ -24,7 +24,7 @@ class Minification {
 			println "Processing jsp's inside directory "+ this.directory
 			def jspdir = new File(this.directory);
 			jspdir.eachFileRecurse(FILES) {
-				if(it.name.endsWith('.jsp') || it.name.endsWith('.jspf')) {
+				if(it.name.endsWith('.html') || it.name.endsWith('.jsp') || it.name.endsWith('.jspf')) {
 					println "Processing file "+it
 					
 					def jspFile = it.text					
@@ -55,7 +55,7 @@ class Minification {
 					//This is the place we identified that a jsp/f file contains code which are to be processed
 					if(captured) {
 						def combinedJsFileNameIndex = jsInMinifyMode.lastIndexOf('.');
-						def jsInCombineMode = this.directory+'/'+jsInMinifyMode.substring(0, combinedJsFileNameIndex)+'.combined.js'
+						def jsInCombineMode = jsInMinifyMode.substring(0, combinedJsFileNameIndex)+'.combined.js'
 						println 'jsInCombineMode '+jsInCombineMode
 						def jspDebug = """\
 								<c:choose>
@@ -66,7 +66,7 @@ class Minification {
 										<script type="text/javascript" src=\"${jsInCombineMode}\"></script>			
 									</c:when>
 									<c:otherwise>
-										<script type="text/javascript" src=\"${ this.directory+'/'+jsInMinifyMode}\"></script>	
+										<script type="text/javascript" src=\"${jsInMinifyMode}\"></script>	
 									</c:otherwise>
 								</c:choose>
 									"""

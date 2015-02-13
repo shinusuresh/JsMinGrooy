@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Minification" default="compile-groovy" basedir=".">
+<project name="Minification" default="process-jsp" basedir=".">
 
 	<property name="build.dir" value="target" />
 	<property name="classes.dir" value="${build.dir}/classes" />
-	<property name="minify.dir" value="${build.dir}/minify" />
+	<property name="minify.dir" value="../../Stores/WebContent" />
 	<property name="libs.dir" value="libs" />
 	<property name="yui.compiler" value="${yui.compiler.path}" />
 	<property name="lineterminator" value="${line.newline}" />	
@@ -15,7 +15,6 @@
 		<fileset dir="${libs.dir}" includes="logging.jar" />
 	</path>
 	
-
 	<path id="yui.classpath">
 		<fileset dir="${libs.dir}" includes="yuicompressor-2.4.8.jar" />
 	</path>
@@ -66,6 +65,7 @@
 
 	<target name="process-jsp" depends="compile-groovy">
 		<java classname="Minification">
+			<classpath location="${classes.dir}"/>
 			<classpath refid="groovy.classpath" />			
 			<classpath refid="yui.classpath" />			
 			<classpath refid="shrinksafe.classpath" />			

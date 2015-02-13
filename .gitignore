@@ -13,3 +13,4 @@ hs_err_pid*
 bin/*
 bin/**/*.properties
 target/*
+dist/*
